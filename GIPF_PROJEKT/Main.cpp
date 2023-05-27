@@ -26,6 +26,7 @@ void gameControlling() {
 }
 //xxxx
 //test
+//stash test
 int main() {
 	gameControlling();
 
