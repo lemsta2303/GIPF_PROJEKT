@@ -24,7 +24,8 @@ void gameControlling() {
 	}
 	return;
 }
-
+//xxxx
+//test
 int main() {
 	gameControlling();
 
