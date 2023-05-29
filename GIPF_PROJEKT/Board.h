@@ -3,9 +3,10 @@
 #include <vector>
 #include <iostream>
 
-#include "BoardField.h"
 
 using namespace std;
+
+class BoardField;
 
 class Board {
 private:
@@ -17,7 +18,6 @@ private:
 	int GBreserve; // liczba pionow gracza czarnego w rezerwie;
 	char whoseTurn; // kogo aktualnie tura
 	int board_height;
-	bool if_checked;
 	vector<char>* chars_loaded;
 	vector<BoardField>* game_board;
 public:
@@ -25,14 +25,15 @@ public:
 	Board(int size, int pieces, int GW, int GB, int GWres, int GBres, char whose);
 	void loadInput();
 	void loadBoard();
-
 	void createGameBoard();
-
-
 	void printBoard();
 	bool checkIfBoardIsCorrect(bool ifPrintInfo);
-
 	int getBoardSize() const;
-	bool getIfChecked() const;
+	vector<BoardField>* getGameBoad() const;
+	BoardField* getBoardFieldAtCords(char first_cord, int second_cord);
+	BoardField* getBoardFieldAtXY(int x, int y);
+	string detectDirection(BoardField first, BoardField second);
+	void changeWhoseTurn();
+	void doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord);
 
 };

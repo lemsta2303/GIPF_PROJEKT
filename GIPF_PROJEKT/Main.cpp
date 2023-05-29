@@ -8,27 +8,29 @@
 using namespace std;
 
 void gameControlling() {
-	string komenda;
+	string command;
+	string commandInMoving;
+	string coordinatesOfMoving;
 	Board plansza;
 	while(!cin.eof()){
-		getline(std::cin, komenda);
-		if (komenda == "LOAD_GAME_BOARD") {
+		getline(std::cin, command);
+		if (command == "LOAD_GAME_BOARD") {
 			plansza.loadInput();
 			plansza.checkIfBoardIsCorrect(true);
 		}
-		else if (komenda == "PRINT_GAME_BOARD") {
+		else if (command == "PRINT_GAME_BOARD") {
 			if (plansza.checkIfBoardIsCorrect(false)) {
 				plansza.printBoard();
 			}
 		}
+		else if (command.substr(0, 7) == "DO_MOVE") {
+			plansza.doMove(command[8], int(command[9])-48, command[11], int(command[12])-48);
+		}
 	}
 	return;
 }
-//xxxx
-//test
-//stash test
+
 int main() {
 	gameControlling();
-
 	return 0;
 }
