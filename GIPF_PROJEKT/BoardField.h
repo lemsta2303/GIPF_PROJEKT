@@ -31,11 +31,11 @@ public:
 	
 	bool checkIfRowFull(int x_direction, int y_direction);
 
-	void moveLeft(char colorOfWhoPushes);
-	void moveRight(char colorOfWhoPushes);
-	void moveUpLeft(char colorOfWhoPushes);
-	void moveUpRight(char colorOfWhoPushes);
-	void moveDownLeft(char colorOfWhoPushes);
-	void moveDownRight(char colorOfWhoPushes);
+	bool moveLeft(char colorOfWhoPushes, bool ifPrintMoveInfo);
+	bool moveRight(char colorOfWhoPushes, bool ifPrintMoveInfo);
+	bool moveUpLeft(char colorOfWhoPushes, bool ifPrintMoveInfo);
+	bool moveUpRight(char colorOfWhoPushes, bool ifPrintMoveInfo);
+	bool moveDownLeft(char colorOfWhoPushes, bool ifPrintMoveInfo);
+	bool moveDownRight(char colorOfWhoPushes, bool ifPrintMoveInfo);
 
 };

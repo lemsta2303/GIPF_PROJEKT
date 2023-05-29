@@ -137,6 +137,7 @@ void Board::createGameBoard() {
 }
 
 void Board::printBoard() {
+	cout << board_size << " " << pieces_to_trigger << " " << GW << " " << GB << endl << GWreserve << " " << GBreserve << " " << whoseTurn << endl;
 	int how_many_spaces = board_size - 1;
 	for (int i = 1; i < board_height + 1; i++) {
 		for (int j = 0; j < how_many_spaces; j++) {
@@ -152,6 +153,7 @@ void Board::printBoard() {
 		}
 		cout << endl;
 	}
+	cout << endl;
 	//WYPISYWANIE KORDOW
 	//how_many_spaces = board_size;
 	//cout << endl;
@@ -168,7 +170,7 @@ void Board::printBoard() {
 	//	cout << endl;
 	//}
 	//cout << endl;
-	////WYPISYWANIE KORDOW XY
+	//WYPISYWANIE KORDOW XY
 	//how_many_spaces = board_size;
 	//cout << endl;
 	//for (int i = 0; i < board_height + 2; i++) {
@@ -216,7 +218,7 @@ bool Board::checkIfBoardIsCorrect(bool ifPrintInfo) {
 		return false;
 	}
 	if (black_on_board > GB - GBreserve) {
-		if(ifPrintInfo) cout << "WRONG_BLACK_PAWNS_NUMBER" << endl;
+		if (ifPrintInfo) cout << "WRONG_BLACK_PAWNS_NUMBER" << endl;
 		return false;
 	}
 	//sprawdzanie czy odpowiednia dlugosc bokow
@@ -231,7 +233,7 @@ bool Board::checkIfBoardIsCorrect(bool ifPrintInfo) {
 			else if (i >= board_size-1) k--;
 		}
 	}
-	if (ifPrintInfo) cout << "BOARD_STATE_OK" << endl;
+	if (ifPrintInfo)  cout << "BOARD_STATE_OK" << endl;
 	return true;
 }
 
@@ -244,9 +246,10 @@ vector<BoardField>* Board::getGameBoad() const {
 }
 
 BoardField* Board::getBoardFieldAtCords(char first_cord, int second_cord) {
-	for (int i = 0; i < board_size + 3; i++) {
+	for (int i = 0; i < board_height+2 ; i++) {
+		//cout << i << endl;
 		for (int j = 0; j < game_board[i].size(); j++) {
-			//cout << game_board[i].at(j).getFirstCoordinate() << game_board[i].at(j).getSecondCoordinate() << endl;
+		//	cout << game_board[i].at(j).getFirstCoordinate() << game_board[i].at(j).getSecondCoordinate() << endl;
 			if (game_board[i].at(j).getFirstCoordinate() == first_cord && game_board[i].at(j).getSecondCoordinate() == second_cord) {
 				return &game_board[i].at(j);
 			}
@@ -256,7 +259,7 @@ BoardField* Board::getBoardFieldAtCords(char first_cord, int second_cord) {
 }
 
 BoardField* Board::getBoardFieldAtXY(int x, int y) {
-	for (int i = 0; i < board_size + 2; i++) {
+	for (int i = 0; i < board_height + 2; i++) {
 		for (int j = 0; j < game_board[i].size(); j++) {
 			if (game_board[i].at(j).getX() == x && game_board[i].at(j).getY() == y) {
 				return &game_board[i].at(j);
@@ -277,11 +280,13 @@ string Board::detectDirection(BoardField first, BoardField second) { // zwraca "
 }
 
 void Board::changeWhoseTurn() {
-	if (whoseTurn = 'B') {
+	if (whoseTurn == 'B') {
+		GBreserve--;
 		whoseTurn = 'W';
 		return;
 	}
-	else if (whoseTurn = 'W') {
+	else if (whoseTurn == 'W') {
+		GWreserve--;
 		whoseTurn = 'B';
 		return;
 	}
@@ -311,39 +316,32 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 
 	if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "LEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveLeft('+');
-		changeWhoseTurn();
+		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveLeft('+', true)) changeWhoseTurn();
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "RIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveRight('+');
-		changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveRight('+', true)) changeWhoseTurn();
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "UPLEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpLeft('+');
-		changeWhoseTurn();
+		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpLeft('+', true)) changeWhoseTurn();
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "UPRIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpRight('+');
-		changeWhoseTurn();
+		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpRight('+', true))	changeWhoseTurn();
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "DOWNLEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownLeft('+');
-		changeWhoseTurn();
+		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownLeft('+', true)) changeWhoseTurn();
 		return;
 	}
-
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "DOWNRIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownRight('+');
-		changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownRight('+', true)) changeWhoseTurn();
 		return;
 	}
 

@@ -22,6 +22,9 @@ void gameControlling() {
 			if (plansza.checkIfBoardIsCorrect(false)) {
 				plansza.printBoard();
 			}
+			else {
+				cout << "EMPTY_BOARD" << endl;
+			}
 		}
 		else if (command.substr(0, 7) == "DO_MOVE") {
 			plansza.doMove(command[8], int(command[9])-48, command[11], int(command[12])-48);
