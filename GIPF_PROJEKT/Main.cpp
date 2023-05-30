@@ -16,10 +16,15 @@ void gameControlling() {
 		getline(std::cin, command);
 		if (command == "LOAD_GAME_BOARD") {
 			plansza.loadInput();
-			plansza.checkIfBoardIsCorrect(true);
+			if (plansza.howManyRowsOfLengthK() != 0 ) {
+				if(plansza.howManyRowsOfLengthK() == 1) cout << "ERROR_FOUND_" << plansza.howManyRowsOfLengthK() << "_ROW_OF_LENGTH_K" << endl;
+				if(plansza.howManyRowsOfLengthK() > 1) cout << "ERROR_FOUND_" << plansza.howManyRowsOfLengthK() << "_ROWS_OF_LENGTH_K" << endl;
+				
+			}
+			else plansza.checkIfBoardIsCorrect(true);
 		}
 		else if (command == "PRINT_GAME_BOARD") {
-			if (plansza.checkIfBoardIsCorrect(false)) {
+			if (plansza.checkIfBoardIsCorrect(false) && !plansza.getIfRowsWithKRowOnInput()) {
 				plansza.printBoard();
 			}
 			else {

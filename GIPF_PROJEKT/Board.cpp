@@ -16,10 +16,12 @@ Board::Board() {
 	GWreserve = 0;
 	GBreserve = 0;
 	board_height = 2 * board_size - 1;
+	ifRowsWithKRowOnInput = false;
 }
 
 Board::Board(int size, int pieces, int GWtoSet, int GBtoSet, int GWres, int GBres, char whose) {
 	board_size = size;
+	ifRowsWithKRowOnInput = false;
 	pieces_to_trigger = pieces;
 	GW = GWtoSet;
 	GB = GBtoSet;
@@ -38,6 +40,7 @@ void Board::loadInput() {
 	cin >> GBreserve;
 	cin >> whoseTurn;
 	board_height = 2 * board_size - 1;
+	ifRowsWithKRowOnInput = false;
 	loadBoard();
 }
 
@@ -92,11 +95,6 @@ void Board::createGameBoard() {
 		else if (i >= board_size) line_length--;
 	}
 	
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-
-		}
-	}
 	char starting_first_cord = 'a';
 	int starting_second_cord = board_size + 1;
 	char first_cord = 'a';
@@ -203,6 +201,205 @@ void Board::printBoard() {
 	//cout << endl;
 }
 
+int Board::howManyRowsOfLengthK() {
+	int howManyRows = 0;
+	int howManyInSingleRow = 0;
+	
+	if (checkIfBoardIsCorrect(false)) {
+		//DLA CZARNYCH
+		//dla poziomu
+		for (int i = 1; i < board_height + 1; i++) {
+			howManyInSingleRow = 0;
+			for (int j = 0; j < game_board[i].size(); j++) {
+				if (game_board[i].at(j).getColor() == 'B') {
+					howManyInSingleRow++;
+				}
+				else {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+					howManyInSingleRow = 0;
+				}
+				if (j == game_board[i].size()) {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+				}
+			}
+		}
+		//dla przekatnej UPRIGHT
+		howManyInSingleRow = 0;
+		int x_starting = 0;
+		int y_starting = -(board_height - 1);
+		int x_pos = x_starting;
+		int y_pos = y_starting;
+		for (int i = 1; i < board_height + 1; i++) {
+			howManyInSingleRow = 0;
+			for (int j = 0; j < game_board[i].size()-2; j++) {
+				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
+				if (getBoardFieldAtXY(x_pos,y_pos)->getColor() == 'B') {
+					//cout << "How many: " << howManyInSingleRow << endl;
+					howManyInSingleRow++;
+				}
+				else {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+					howManyInSingleRow = 0;
+				}
+				if (j == game_board[i].size()-3) {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+				}
+				x_pos++;
+				y_pos++;
+			}
+			if (x_starting > -board_size+1) {
+				x_starting--;
+				y_starting++;
+			}
+			else y_starting += 2;
+			x_pos = x_starting;
+			y_pos = y_starting;
+		}
+		//dla przekatnej DOWNRIGHT
+		howManyInSingleRow = 0;
+		x_starting = 0;
+		y_starting = -(board_height - 1);
+		x_pos = x_starting;
+		y_pos = y_starting;
+		for (int i = 1; i < board_height + 1; i++) {
+			howManyInSingleRow = 0;
+			for (int j = 0; j < game_board[i].size() - 2; j++) {
+				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
+				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B') {
+					//cout << "How many: " << howManyInSingleRow << endl;
+					howManyInSingleRow++;
+				}
+				else {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+					howManyInSingleRow = 0;
+				}
+				if (j == game_board[i].size() - 3) {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+				}
+				x_pos--;
+				y_pos++;
+			}
+			if (x_starting < board_size-1) {
+				x_starting++;
+				y_starting++;
+			}
+			else y_starting += 2;
+			x_pos = x_starting;
+			y_pos = y_starting;
+		}
+
+
+		//DLA BIALYCH
+		//dla poziomu
+		howManyInSingleRow = 0;
+		for (int i = 1; i < board_height + 1; i++) {
+			howManyInSingleRow = 0;
+			for (int j = 0; j < game_board[i].size(); j++) {
+				if (game_board[i].at(j).getColor() == 'W') {
+					howManyInSingleRow++;
+				}
+				else {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+					howManyInSingleRow = 0;
+				}
+				if (j == game_board[i].size()) {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+				}
+			}
+		}
+		//dla przekatnej UPRIGHT
+		howManyInSingleRow = 0;
+		x_starting = 0;
+		y_starting = -(board_height - 1);
+		x_pos = x_starting;
+		y_pos = y_starting;
+		for (int i = 1; i < board_height + 1; i++) {
+			howManyInSingleRow = 0;
+			for (int j = 0; j < game_board[i].size() - 2; j++) {
+				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
+				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') {
+					//cout << "How many: " << howManyInSingleRow << endl;
+					howManyInSingleRow++;
+				}
+				else {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+					howManyInSingleRow = 0;
+				}
+				if (j == game_board[i].size() - 3) {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+				}
+				x_pos++;
+				y_pos++;
+			}
+			if (x_starting > -board_size + 1) {
+				x_starting--;
+				y_starting++;
+			}
+			else y_starting += 2;
+			x_pos = x_starting;
+			y_pos = y_starting;
+		}
+		//dla przekatnej DOWNRIGHT
+		howManyInSingleRow = 0;
+		x_starting = 0;
+		y_starting = -(board_height - 1);
+		x_pos = x_starting;
+		y_pos = y_starting;
+		for (int i = 1; i < board_height + 1; i++) {
+			howManyInSingleRow = 0;
+			for (int j = 0; j < game_board[i].size() - 2; j++) {
+				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
+				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') {
+					//cout << "How many: " << howManyInSingleRow << endl;
+					howManyInSingleRow++;
+				}
+				else {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+					howManyInSingleRow = 0;
+				}
+				if (j == game_board[i].size() - 3) {
+					if (howManyInSingleRow >= pieces_to_trigger) {
+						howManyRows++;
+					}
+				}
+				x_pos--;
+				y_pos++;
+			}
+			if (x_starting < board_size - 1) {
+				x_starting++;
+				y_starting++;
+			}
+			else y_starting += 2;
+			x_pos = x_starting;
+			y_pos = y_starting;
+		}
+	}
+	if (howManyRows != 0) ifRowsWithKRowOnInput = true;
+	return howManyRows;
+}
+
 bool Board::checkIfBoardIsCorrect(bool ifPrintInfo) {
 	int white_on_board = 0;
 	int black_on_board = 0;
@@ -239,6 +436,10 @@ bool Board::checkIfBoardIsCorrect(bool ifPrintInfo) {
 
 int Board::getBoardSize() const {
 	return board_size;
+}
+
+bool Board::getIfRowsWithKRowOnInput() const {
+	return ifRowsWithKRowOnInput;
 }
 
 vector<BoardField>* Board::getGameBoad() const {
