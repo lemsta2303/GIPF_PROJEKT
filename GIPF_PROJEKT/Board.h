@@ -22,6 +22,7 @@ private:
 	vector<BoardField>* game_board;
 	bool ifRowsWithKRowOnInput;
 	bool ifBoardCorrect;
+	string gameState;
 public:
 	Board();
 	Board(int size, int pieces, int GW, int GB, int GWres, int GBres, char whose);
@@ -37,6 +38,7 @@ public:
 	bool checkIfBoardIsCorrect(bool ifPrintInfo);
 	void setIfBoardCorrect(bool ifCorrect);
 	int getBoardSize() const;
+	string getGameState() const;
 	bool getIfBoardCorrect() const;
 	bool getIfRowsWithKRowOnInput() const;
 	vector<BoardField>* getGameBoad() const;
@@ -46,5 +48,4 @@ public:
 	void changeWhoseTurn();
 	bool checkIfPriorityCapturingCorrect(char FROM_first_cord, int FROM_second_cord, char priorityFirst_firstCord, int priorityFirst_secondCord, char prioritySecond_firstCord, int prioritySecond_secondCord, char priorityColor, string direction);
 	void doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char priorityFirst_firstCord, int priorityFirst_secondCord, char prioritySecond_firstCord, int prioritySecond_secondCord, char priorityColor);
-
 };

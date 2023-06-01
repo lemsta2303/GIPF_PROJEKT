@@ -24,18 +24,14 @@ public:
 	char getColor() const;
 	int getX() const;
 	int getY() const;
-
 	void setBoard(Board* b);
 	void setX(int x);
 	void setY(int y);
-	
 	bool checkIfRowFull(int x_direction, int y_direction);
-
 	bool moveLeft(char colorOfWhoPushes, bool ifPrintMoveInfo);
 	bool moveRight(char colorOfWhoPushes, bool ifPrintMoveInfo);
 	bool moveUpLeft(char colorOfWhoPushes, bool ifPrintMoveInfo);
 	bool moveUpRight(char colorOfWhoPushes, bool ifPrintMoveInfo);
 	bool moveDownLeft(char colorOfWhoPushes, bool ifPrintMoveInfo);
 	bool moveDownRight(char colorOfWhoPushes, bool ifPrintMoveInfo);
-
 };

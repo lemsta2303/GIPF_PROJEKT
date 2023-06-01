@@ -142,6 +142,7 @@ void Board::createGameBoard() {
 			}
 		}
 	}
+	gameState = "in_progress\n";
 }
 
 void Board::printBoard() {
@@ -311,19 +312,15 @@ string Board::detectDirectionInPriorityCapturing(char FROM_first_cord, int FROM_
 	return "NONE";
 }
 
-int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char color) { // jesli kolor sie nie zgadza funckja zwraca -1
+int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char color) { 
 	BoardField* first = getBoardFieldAtCords(FROM_first_cord, FROM_second_cord);
 	BoardField* second = getBoardFieldAtCords(TO_first_cord, TO_second_cord);
 	string direction = detectDirectionInPriorityCapturing(FROM_first_cord, FROM_second_cord, TO_first_cord, TO_second_cord);
 	int distance = 1;
-	//cout << first->getFirstCoordinate() << " " << first->getSecondCoordinate() << endl;
-	//cout << second->getFirstCoordinate() << " " << second->getSecondCoordinate() << endl;
-	//cout << direction << endl;
 	if (color == 'w') color = 'W';
 	else if (color == 'b') color = 'B';
 	if (direction == "LEFT") {
 		while (first->getColor() == color && (first->getFirstCoordinate() != second->getFirstCoordinate() || first->getSecondCoordinate() != second->getSecondCoordinate())) {
-			//cout << "XXXX";
 			first = getBoardFieldAtXY(first->getX(), first->getY() - 2);
 			distance++;
 		}
@@ -333,7 +330,6 @@ int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cor
 		first = getBoardFieldAtCords(FROM_first_cord, FROM_second_cord);
 		distance = 1;
 		while (first->getColor() == color && (first->getFirstCoordinate() != second->getFirstCoordinate() || first->getSecondCoordinate() != second->getSecondCoordinate())) {
-			//cout << "XXXX";
 			first = getBoardFieldAtXY(first->getX(), first->getY() + 2);
 			distance++;
 		}
@@ -343,7 +339,6 @@ int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cor
 		first = getBoardFieldAtCords(FROM_first_cord, FROM_second_cord);
 		distance = 1;
 		while (first->getColor() == color && (first->getFirstCoordinate() != second->getFirstCoordinate() || first->getSecondCoordinate() != second->getSecondCoordinate())) {
-		//	cout << "XXXX";
 			first = getBoardFieldAtXY(first->getX()+1, first->getY()-1);
 			distance++;
 		}
@@ -353,10 +348,7 @@ int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cor
 		first = getBoardFieldAtCords(FROM_first_cord, FROM_second_cord);
 		distance = 1;
 		while (first->getColor() == color && (first->getFirstCoordinate() != second->getFirstCoordinate() || first->getSecondCoordinate() != second->getSecondCoordinate()) ) {
-		//	cout << "XXXX";
 			first = getBoardFieldAtXY(first->getX()+1, first->getY()+1);
-			//cout << second->getFirstCoordinate() << " " << second->getSecondCoordinate() << endl;
-			//cout <<distance<< " " << first->getFirstCoordinate() << " " << first->getSecondCoordinate() << endl;
 			distance++;
 		}
 		return distance;
@@ -365,7 +357,6 @@ int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cor
 		first = getBoardFieldAtCords(FROM_first_cord, FROM_second_cord);
 		distance = 1;
 		while (first->getColor() == color && (first->getFirstCoordinate() != second->getFirstCoordinate() || first->getSecondCoordinate() != second->getSecondCoordinate())) {
-	//		cout << "XXXX";
 			first = getBoardFieldAtXY(first->getX()-1, first->getY()-1);
 			distance++;
 		}
@@ -375,7 +366,6 @@ int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cor
 		first = getBoardFieldAtCords(FROM_first_cord, FROM_second_cord);
 		distance = 1;
 		while (first->getColor() == color && (first->getFirstCoordinate() != second->getFirstCoordinate() || first->getSecondCoordinate() != second->getSecondCoordinate())) {
-		//	cout << "XXXX";
 			first = getBoardFieldAtXY(first->getX()-1, first->getY()+1);
 			distance++;
 		}
@@ -388,7 +378,6 @@ int Board::getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cor
 void Board::priorityCapturing(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char color) {
 	string direction = detectDirectionInPriorityCapturing(FROM_first_cord, FROM_second_cord, TO_first_cord, TO_second_cord);
 	int distance = getDistanceBetweenTwoFields(FROM_first_cord, FROM_second_cord, TO_first_cord, TO_second_cord, color);
-//	cout << distance << " " << direction;
 	if (getDistanceBetweenTwoFields(FROM_first_cord, FROM_second_cord, TO_first_cord, TO_second_cord, color) >= pieces_to_trigger) {
 		if (direction == "LEFT") {
 			capturing(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->getX(), getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->getY()+2, 0,-2, color, true);
@@ -414,14 +403,12 @@ void Board::priorityCapturing(char FROM_first_cord, int FROM_second_cord, char T
 int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 	int howManyRows = 0;
 	int howManyInSingleRow = 0;
-	
 	if (checkIfBoardIsCorrect(false)) {
 		//DLA CZARNYCH
 		//dla poziomu
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
 			for (int j = 1; j < game_board[i].size()-1; j++) {
-				//cout << game_board[i].at(j).getColor();
 				if (game_board[i].at(j).getColor() == 'B') {
 					howManyInSingleRow++;
 				}
@@ -450,10 +437,7 @@ int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
 			for (int j = 1; j < game_board[i].size()-1; j++) {
-
-				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos,y_pos)->getColor() == 'B') {
-					//cout << "How many: " << howManyInSingleRow << endl;
 					howManyInSingleRow++;
 				}
 				else {
@@ -481,7 +465,6 @@ int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 			x_pos = x_starting;
 			y_pos = y_starting;
 		}
-		//dla przekatnej DOWNRIGHT
 		howManyInSingleRow = 0;
 		x_starting = 0;
 		y_starting = -(board_height - 1);
@@ -490,9 +473,7 @@ int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
 			for (int j = 1; j < game_board[i].size() - 1; j++) {
-				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B') {
-					//cout << "How many: " << howManyInSingleRow << endl;
 					howManyInSingleRow++;
 				}
 				else {
@@ -554,9 +535,7 @@ int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
 			for (int j = 1; j < game_board[i].size() - 1; j++) {
-				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') {
-					//cout << "How many: " << howManyInSingleRow << endl;
 					howManyInSingleRow++;
 				}
 				else {
@@ -593,10 +572,7 @@ int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
 			for (int j = 1; j < game_board[i].size() - 1; j++) {
-				//cout << getBoardFieldAtXY(x_pos, y_pos)->getColor();
-				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') {
-					//cout << "How many: " << howManyInSingleRow << endl;
 					howManyInSingleRow++;
 				}
 				else {
@@ -626,10 +602,8 @@ int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 		}
 	}
 	if (howManyRows != 0 && ifCapturing == false) {
-		//cout << "change";
 		ifRowsWithKRowOnInput = true;
 	}
-	//cout << howManyRows << "!!!" << endl;
 	return howManyRows;
 }
 
@@ -651,7 +625,6 @@ bool Board::checkIfBoardIsCorrect(bool ifPrintInfo) {
 		if (ifPrintInfo) cout << "WRONG_BLACK_PAWNS_NUMBER" << endl;
 		return false;
 	}
-	//sprawdzanie czy odpowiednia dlugosc bokow
 	int k = board_size;
 	for (int i = 0; i < board_height; i++) {
 		if (chars_loaded[i].size() != k) {
@@ -672,6 +645,10 @@ int Board::getBoardSize() const {
 	return board_size;
 }
 
+string Board::getGameState() const {
+	return gameState;
+}
+
 bool Board::getIfRowsWithKRowOnInput() const {
 	return ifRowsWithKRowOnInput;
 }
@@ -682,9 +659,7 @@ vector<BoardField>* Board::getGameBoad() const {
 
 BoardField* Board::getBoardFieldAtCords(char first_cord, int second_cord) {
 	for (int i = 0; i < board_height+2 ; i++) {
-		//cout << i << endl;
 		for (int j = 0; j < game_board[i].size(); j++) {
-		//	cout << game_board[i].at(j).getFirstCoordinate() << game_board[i].at(j).getSecondCoordinate() << endl;
 			if (game_board[i].at(j).getFirstCoordinate() == first_cord && game_board[i].at(j).getSecondCoordinate() == second_cord) {
 				return &game_board[i].at(j);
 			}
@@ -728,7 +703,6 @@ void Board::changeWhoseTurn() {
 }
 
 bool Board::checkIfPriorityCapturingCorrect(char FROM_first_cord, int FROM_second_cord, char priorityFirst_firstCord, int priorityFirst_secondCord, char prioritySecond_firstCord, int prioritySecond_secondCord, char priorityColor, string direction) {
-//	printBoard();
 	vector<BoardField>* gameBoard_before = game_board;
 	vector<BoardField>* tmp_game_board = new vector<BoardField>[board_height + 2];
 	for (int i = 0; i < board_height + 2; i ++ ) {
@@ -737,7 +711,6 @@ bool Board::checkIfPriorityCapturingCorrect(char FROM_first_cord, int FROM_secon
 		}
 	}
 	game_board = tmp_game_board;
-	//cout << direction << endl;
 	if (direction == "LEFT"){
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveLeft('+', false);
 	}
@@ -755,26 +728,19 @@ bool Board::checkIfPriorityCapturingCorrect(char FROM_first_cord, int FROM_secon
 	}
 	else if (direction == "DOWNRIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownRight('+', false);
-	//	printBoard();
 	}
-
 	if (getBoardFieldAtCords(priorityFirst_firstCord, priorityFirst_secondCord)->getColor() != char(int(priorityColor)-32)) {
 		cout << "WRONG_COLOR_OF_CHOSEN_ROW" << endl;
 		game_board = gameBoard_before;
-	//	printBoard();
 		return false;
 	}
-	//cout << getDistanceBetweenTwoFields(priorityFirst_firstCord, priorityFirst_secondCord, prioritySecond_firstCord, prioritySecond_secondCord, priorityColor) << endl;
 	if (getDistanceBetweenTwoFields(priorityFirst_firstCord, priorityFirst_secondCord, prioritySecond_firstCord, prioritySecond_secondCord, priorityColor) < pieces_to_trigger){
 		cout << "WRONG_INDEX_OF_CHOSEN_ROW" << endl;
 		game_board = gameBoard_before;
-	//	printBoard();
 		return false;
 	}
 	game_board = gameBoard_before;
-	//printBoard();
 	return true;
-
 }
 
 void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord,char priorityFirst_firstCord, int priorityFirst_secondCord, char prioritySecond_firstCord, int prioritySecond_secondCord, char priorityColor) {
@@ -798,7 +764,6 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 		cout << "UNKNOWN_MOVE_DIRECTION" << endl;
 		return;
 	}
-
 	if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "LEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
 		if (priorityFirst_secondCord != -1) {
@@ -814,6 +779,9 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 			howManyRowsOfLengthKWithCapturing(true);
 			changeWhoseTurn();
 		}
+		if (GWreserve == 0) gameState = "black_win\n";
+		else if (GBreserve == 0) gameState = "white_win\n";
+		else gameState = "in_progress\n";
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "RIGHT") {
@@ -831,6 +799,9 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 			howManyRowsOfLengthKWithCapturing(true);
 			changeWhoseTurn();
 		}
+		if (GWreserve == 0) gameState = "black_win\n";
+		else if (GBreserve == 0) gameState = "white_win\n";
+		else gameState = "in_progress\n";
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "UPLEFT") {
@@ -848,6 +819,9 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 			howManyRowsOfLengthKWithCapturing(true);
 			changeWhoseTurn();
 		}
+		if (GWreserve == 0) gameState = "black_win\n";
+		else if (GBreserve == 0) gameState = "white_win\n";
+		else gameState = "in_progress\n";
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "UPRIGHT") {
@@ -865,6 +839,9 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 			howManyRowsOfLengthKWithCapturing(true);
 			changeWhoseTurn();
 		}
+		if (GWreserve == 0) gameState = "black_win\n";
+		else if (GBreserve == 0) gameState = "white_win\n";
+		else gameState = "in_progress\n";
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "DOWNLEFT") {
@@ -882,6 +859,9 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 			howManyRowsOfLengthKWithCapturing(true);
 			changeWhoseTurn();
 		}
+		if (GWreserve == 0) gameState = "black_win\n";
+		else if (GBreserve == 0) gameState = "white_win\n";
+		else gameState = "in_progress\n";
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "DOWNRIGHT") {
@@ -899,9 +879,9 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 			howManyRowsOfLengthKWithCapturing(true);
 			changeWhoseTurn();
 		}
+		if (GWreserve == 0) gameState = "black_win\n";
+		else if (GBreserve == 0) gameState = "white_win\n";
+		else gameState = "in_progress\n";
 		return;
 	}
-
-
-	
 }

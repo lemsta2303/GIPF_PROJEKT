@@ -114,7 +114,6 @@ bool BoardField::moveUpLeft(char colorOfWhoPushes, bool ifPrintMoveInfo) {
 		cout << "BAD_MOVE_ROW_IS_FULL" << endl;
 		return false;
 	}
-	
 }
 
 bool BoardField::moveUpRight(char colorOfWhoPushes, bool ifPrintMoveInfo) {
