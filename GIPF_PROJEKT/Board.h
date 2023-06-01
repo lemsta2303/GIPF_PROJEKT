@@ -29,7 +29,10 @@ public:
 	void loadBoard();
 	void createGameBoard();
 	void printBoard();
-	void capturing(int x_pos, int y_pos, int x_dir, int y_dir, char color);
+	void capturing(int x_pos, int y_pos, int x_dir, int y_dir, char color, bool ifPriorityCapturing);
+	string detectDirectionInPriorityCapturing(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord);
+	int getDistanceBetweenTwoFields(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char color);
+	void priorityCapturing(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char color);
 	int howManyRowsOfLengthKWithCapturing(bool capturing);
 	bool checkIfBoardIsCorrect(bool ifPrintInfo);
 	void setIfBoardCorrect(bool ifCorrect);
@@ -41,6 +44,7 @@ public:
 	BoardField* getBoardFieldAtXY(int x, int y);
 	string detectDirection(BoardField first, BoardField second);
 	void changeWhoseTurn();
-	void doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord);
+	bool checkIfPriorityCapturingCorrect(char FROM_first_cord, int FROM_second_cord, char priorityFirst_firstCord, int priorityFirst_secondCord, char prioritySecond_firstCord, int prioritySecond_secondCord, char priorityColor, string direction);
+	void doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cord, int TO_second_cord, char priorityFirst_firstCord, int priorityFirst_secondCord, char prioritySecond_firstCord, int prioritySecond_secondCord, char priorityColor);
 
 };

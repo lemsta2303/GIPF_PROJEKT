@@ -24,8 +24,6 @@ void gameControlling() {
 			else plansza.checkIfBoardIsCorrect(true);
 		}
 		else if (command == "PRINT_GAME_BOARD") {
-			//cout << plansza.checkIfBoardIsCorrect(false) << endl;
-			//cout << !plansza.getIfRowsWithKRowOnInput();
 			if (plansza.getIfBoardCorrect() && !plansza.getIfRowsWithKRowOnInput()) {
 				plansza.printBoard();
 			}
@@ -35,7 +33,27 @@ void gameControlling() {
 			}
 		}
 		else if (command.substr(0, 7) == "DO_MOVE") {
-			plansza.doMove(command[8], int(command[9])-48, command[11], int(command[12])-48);
+		//	cout << command << endl;
+		//	cout << command.length();
+		/*	if (command.length() > 13) {
+				plansza.priorityCapturing(command[17], int(command[18]) - 48, command[20], int(command[21]) - 48, command[14]);
+
+			}*/
+			char priorityFirst_firstCord = 'x';
+			int priorityFirst_secondCord = -1;
+			char prioritySecond_firstCord = 'x';
+			int prioritySecond_secondCord = -1;
+			char priorityColor = 'x';
+			if (command.length() > 13) {
+				priorityFirst_firstCord = command[17];
+				priorityFirst_secondCord = int(command[18]) - 48;
+				prioritySecond_firstCord = command[20];
+				prioritySecond_secondCord = int(command[21]) - 48;
+				priorityColor = command[14];
+			}
+			
+			plansza.doMove(command[8], int(command[9])-48, command[11], int(command[12])-48, priorityFirst_firstCord, priorityFirst_secondCord, prioritySecond_firstCord, prioritySecond_secondCord, priorityColor);
+			
 		}
 	}
 	return;
@@ -43,5 +61,8 @@ void gameControlling() {
 
 int main() {
 	gameControlling();
+	//char x = 'a';
+	//cout << x;
+	//cout << char(int(x) - 32);
 	return 0;
 }
