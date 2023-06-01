@@ -17,6 +17,7 @@ Board::Board() {
 	GBreserve = 0;
 	board_height = 2 * board_size - 1;
 	ifRowsWithKRowOnInput = false;
+	ifBoardCorrect = false;
 }
 
 Board::Board(int size, int pieces, int GWtoSet, int GBtoSet, int GWres, int GBres, char whose) {
@@ -41,6 +42,7 @@ void Board::loadInput() {
 	cin >> whoseTurn;
 	board_height = 2 * board_size - 1;
 	ifRowsWithKRowOnInput = false;
+	ifBoardCorrect = false;
 	loadBoard();
 }
 
@@ -59,6 +61,14 @@ void Board::loadBoard() {
 		}
 	}
 	if(checkIfBoardIsCorrect(false)) createGameBoard();
+}
+
+void Board::setIfBoardCorrect(bool ifCorrect) {
+	ifBoardCorrect = ifCorrect;
+}
+
+bool Board::getIfBoardCorrect() const {
+	return ifBoardCorrect;
 }
 
 void Board::createGameBoard() {
@@ -171,18 +181,19 @@ void Board::printBoard() {
 	//WYPISYWANIE KORDOW XY
 	//how_many_spaces = board_size;
 	//cout << endl;
-	//for (int i = 0; i < board_height + 2; i++) {
+	//for (int i = 1; i < board_height + 1; i++) {
 	//	for (int j = 0; j < how_many_spaces; j++) {
 	//		cout << " ";
 	//	}
 	//	if (i < board_size) how_many_spaces--;
 	//	else if (i >= board_size) how_many_spaces++;
-	//	for (int j = 0; j < game_board[i].size(); j++) {
+	//	for (int j = 1; j < game_board[i].size()-1; j++) {
 	//		cout << "(" << game_board[i].at(j).getX() << "," << game_board[i].at(j).getY() << ")";
 	//		if (j != game_board[i].size() - 1) cout << " ";
 	//	}
 	//	cout << endl;
 	//}
+	//cout << endl;
 	//cout << endl;
 	//// WYPISYWANIE MAPY Z BOCZNYMI POLAMI
 	//how_many_spaces = board_size;
@@ -201,7 +212,33 @@ void Board::printBoard() {
 	//cout << endl;
 }
 
-int Board::howManyRowsOfLengthK() {
+void Board::capturing(int x_pos, int y_pos, int x_dir, int y_dir, char color) {
+	while (getBoardFieldAtXY(x_pos + x_dir, y_pos + y_dir)->getColor() == 'B' || getBoardFieldAtXY(x_pos + x_dir, y_pos + y_dir)->getColor() == 'W') {
+		x_pos += x_dir;
+		y_pos += y_dir;
+		
+		if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W' && color == 'W') {
+			getBoardFieldAtXY(x_pos, y_pos)->setColor('_');
+			//cout << "(" << x_pos << ", " << y_pos << ")" << endl;
+			GWreserve++;
+		}
+		else if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B' && color == 'B') {
+			getBoardFieldAtXY(x_pos, y_pos)->setColor('_');
+		//	cout << "(" << x_pos << ", " << y_pos << ")" << endl;
+			GBreserve++;
+		}
+		else if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W' && color != 'W') {
+			getBoardFieldAtXY(x_pos, y_pos)->setColor('_');
+		//	cout << "(" << x_pos << ", " << y_pos << ")" << endl;
+		}
+		else if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B' && color != 'B') {
+			getBoardFieldAtXY(x_pos, y_pos)->setColor('_');
+		//	cout << "(" << x_pos << ", " << y_pos << ")" << endl;
+		}
+	}
+}
+
+int Board::howManyRowsOfLengthKWithCapturing(bool ifCapturing) {
 	int howManyRows = 0;
 	int howManyInSingleRow = 0;
 	
@@ -210,19 +247,23 @@ int Board::howManyRowsOfLengthK() {
 		//dla poziomu
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
-			for (int j = 0; j < game_board[i].size(); j++) {
+			for (int j = 1; j < game_board[i].size()-1; j++) {
+				//cout << game_board[i].at(j).getColor();
 				if (game_board[i].at(j).getColor() == 'B') {
 					howManyInSingleRow++;
 				}
 				else {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if(ifCapturing && game_board[i].at(j).getColor() == 'W')  capturing(game_board[i].at(j).getX(), game_board[i].at(j).getY() + 2, 0, -2, 'B');
+						else if (ifCapturing) capturing(game_board[i].at(j).getX(), game_board[i].at(j).getY(), 0, -2, 'B');
 					}
 					howManyInSingleRow = 0;
 				}
-				if (j == game_board[i].size()) {
+				if (j == game_board[i].size()-2) {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing) capturing(game_board[i].at(j).getX(), game_board[i].at(j).getY()+2, 0, -2, 'B');
 					}
 				}
 			}
@@ -235,7 +276,8 @@ int Board::howManyRowsOfLengthK() {
 		int y_pos = y_starting;
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
-			for (int j = 0; j < game_board[i].size()-2; j++) {
+			for (int j = 1; j < game_board[i].size()-1; j++) {
+
 				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos,y_pos)->getColor() == 'B') {
 					//cout << "How many: " << howManyInSingleRow << endl;
@@ -244,12 +286,15 @@ int Board::howManyRowsOfLengthK() {
 				else {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing && getBoardFieldAtXY(x_pos,y_pos)->getColor()=='W')  capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() + 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, -1, -1, 'B');
+						else if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() , getBoardFieldAtXY(x_pos, y_pos)->getY(), -1, -1, 'B');
 					}
 					howManyInSingleRow = 0;
 				}
-				if (j == game_board[i].size()-3) {
+				if (j == game_board[i].size()-2) {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() + 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, -1, -1, 'B');
 					}
 				}
 				x_pos++;
@@ -271,7 +316,7 @@ int Board::howManyRowsOfLengthK() {
 		y_pos = y_starting;
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
-			for (int j = 0; j < game_board[i].size() - 2; j++) {
+			for (int j = 1; j < game_board[i].size() - 1; j++) {
 				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B') {
 					//cout << "How many: " << howManyInSingleRow << endl;
@@ -280,12 +325,15 @@ int Board::howManyRowsOfLengthK() {
 				else {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing && getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() - 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, 1, -1, 'B');
+						else if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX(), getBoardFieldAtXY(x_pos, y_pos)->getY(), 1, -1, 'B');
 					}
 					howManyInSingleRow = 0;
 				}
-				if (j == game_board[i].size() - 3) {
+				if (j == game_board[i].size() - 2) {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() - 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, 1, -1, 'B');
 					}
 				}
 				x_pos--;
@@ -299,26 +347,27 @@ int Board::howManyRowsOfLengthK() {
 			x_pos = x_starting;
 			y_pos = y_starting;
 		}
-
-
 		//DLA BIALYCH
 		//dla poziomu
 		howManyInSingleRow = 0;
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
-			for (int j = 0; j < game_board[i].size(); j++) {
+			for (int j = 1; j < game_board[i].size()-1; j++) {
 				if (game_board[i].at(j).getColor() == 'W') {
 					howManyInSingleRow++;
 				}
 				else {
-					if (howManyInSingleRow >= pieces_to_trigger) {
+					if (howManyInSingleRow >= pieces_to_trigger ) {
 						howManyRows++;
+						if (ifCapturing && game_board[i].at(j).getColor() == 'B')  capturing(game_board[i].at(j).getX(), game_board[i].at(j).getY() + 2, 0, -2, 'B');
+						else if (ifCapturing) capturing(game_board[i].at(j).getX(), game_board[i].at(j).getY(), 0, -2, 'W');
 					}
 					howManyInSingleRow = 0;
 				}
-				if (j == game_board[i].size()) {
+				if (j == game_board[i].size()-2) {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing) capturing(game_board[i].at(j).getX(), game_board[i].at(j).getY()+2, 0, -2, 'W');
 					}
 				}
 			}
@@ -331,21 +380,24 @@ int Board::howManyRowsOfLengthK() {
 		y_pos = y_starting;
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
-			for (int j = 0; j < game_board[i].size() - 2; j++) {
+			for (int j = 1; j < game_board[i].size() - 1; j++) {
 				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') {
 					//cout << "How many: " << howManyInSingleRow << endl;
 					howManyInSingleRow++;
 				}
 				else {
-					if (howManyInSingleRow >= pieces_to_trigger) {
+					if (howManyInSingleRow >= pieces_to_trigger ) {
 						howManyRows++;
+						if (ifCapturing && getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B') capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() + 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, -1, -1, 'W');
+						else if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX(), getBoardFieldAtXY(x_pos, y_pos)->getY(), -1, -1, 'W');
 					}
 					howManyInSingleRow = 0;
 				}
-				if (j == game_board[i].size() - 3) {
+				if (j == game_board[i].size() - 2) {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() + 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, -1, -1, 'W');
 					}
 				}
 				x_pos++;
@@ -367,21 +419,25 @@ int Board::howManyRowsOfLengthK() {
 		y_pos = y_starting;
 		for (int i = 1; i < board_height + 1; i++) {
 			howManyInSingleRow = 0;
-			for (int j = 0; j < game_board[i].size() - 2; j++) {
+			for (int j = 1; j < game_board[i].size() - 1; j++) {
+				//cout << getBoardFieldAtXY(x_pos, y_pos)->getColor();
 				//cout << game_board[i].size() << "(size):  " << x_pos << " " << y_pos << endl;
 				if (getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'W') {
 					//cout << "How many: " << howManyInSingleRow << endl;
 					howManyInSingleRow++;
 				}
 				else {
-					if (howManyInSingleRow >= pieces_to_trigger) {
+					if (howManyInSingleRow >= pieces_to_trigger ) {
 						howManyRows++;
+						if (ifCapturing && getBoardFieldAtXY(x_pos, y_pos)->getColor() == 'B') capturing(getBoardFieldAtXY(x_pos, y_pos)->getX() - 1, getBoardFieldAtXY(x_pos, y_pos)->getY() + 1, 1, -1, 'W');
+						else if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX(), getBoardFieldAtXY(x_pos, y_pos)->getY(), 1, -1, 'W');
 					}
 					howManyInSingleRow = 0;
 				}
-				if (j == game_board[i].size() - 3) {
+				if (j == game_board[i].size() - 2) {
 					if (howManyInSingleRow >= pieces_to_trigger) {
 						howManyRows++;
+						if (ifCapturing) capturing(getBoardFieldAtXY(x_pos, y_pos)->getX()-1, getBoardFieldAtXY(x_pos, y_pos)->getY()+1, 1, -1, 'W');
 					}
 				}
 				x_pos--;
@@ -396,7 +452,11 @@ int Board::howManyRowsOfLengthK() {
 			y_pos = y_starting;
 		}
 	}
-	if (howManyRows != 0) ifRowsWithKRowOnInput = true;
+	if (howManyRows != 0 && ifCapturing == false) {
+		//cout << "change";
+		ifRowsWithKRowOnInput = true;
+	}
+	//cout << howManyRows << "!!!" << endl;
 	return howManyRows;
 }
 
@@ -431,6 +491,7 @@ bool Board::checkIfBoardIsCorrect(bool ifPrintInfo) {
 		}
 	}
 	if (ifPrintInfo)  cout << "BOARD_STATE_OK" << endl;
+	if (ifPrintInfo) ifBoardCorrect = true;
 	return true;
 }
 
@@ -517,32 +578,50 @@ void Board::doMove(char FROM_first_cord, int FROM_second_cord, char TO_first_cor
 
 	if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "LEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveLeft('+', true)) changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveLeft('+', true)) {
+			howManyRowsOfLengthKWithCapturing(true);
+			changeWhoseTurn();
+		}
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "RIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveRight('+', true)) changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveRight('+', true)) {
+			howManyRowsOfLengthKWithCapturing(true);
+			changeWhoseTurn();
+		}
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "UPLEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpLeft('+', true)) changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpLeft('+', true)) {
+			howManyRowsOfLengthKWithCapturing(true);
+			changeWhoseTurn();
+		}
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "UPRIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpRight('+', true))	changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveUpRight('+', true)) {
+			howManyRowsOfLengthKWithCapturing(true);
+			changeWhoseTurn();
+		}
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "DOWNLEFT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		if(getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownLeft('+', true)) changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownLeft('+', true)) {
+			howManyRowsOfLengthKWithCapturing(true);
+			changeWhoseTurn();
+		}
 		return;
 	}
 	else if (detectDirection(*getBoardFieldAtCords(FROM_first_cord, FROM_second_cord), *getBoardFieldAtCords(TO_first_cord, TO_second_cord)) == "DOWNRIGHT") {
 		getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->setColor(whoseTurn);
-		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownRight('+', true)) changeWhoseTurn();
+		if (getBoardFieldAtCords(FROM_first_cord, FROM_second_cord)->moveDownRight('+', true)) {
+			howManyRowsOfLengthKWithCapturing(true);
+			changeWhoseTurn();
+		}
 		return;
 	}
 

@@ -16,18 +16,21 @@ void gameControlling() {
 		getline(std::cin, command);
 		if (command == "LOAD_GAME_BOARD") {
 			plansza.loadInput();
-			if (plansza.howManyRowsOfLengthK() != 0 ) {
-				if(plansza.howManyRowsOfLengthK() == 1) cout << "ERROR_FOUND_" << plansza.howManyRowsOfLengthK() << "_ROW_OF_LENGTH_K" << endl;
-				if(plansza.howManyRowsOfLengthK() > 1) cout << "ERROR_FOUND_" << plansza.howManyRowsOfLengthK() << "_ROWS_OF_LENGTH_K" << endl;
+			if (plansza.howManyRowsOfLengthKWithCapturing(false) != 0 ) {
+				if(plansza.howManyRowsOfLengthKWithCapturing(false) == 1) cout << "ERROR_FOUND_" << plansza.howManyRowsOfLengthKWithCapturing(false) << "_ROW_OF_LENGTH_K" << endl;
+				if(plansza.howManyRowsOfLengthKWithCapturing(false) > 1) cout << "ERROR_FOUND_" << plansza.howManyRowsOfLengthKWithCapturing(false) << "_ROWS_OF_LENGTH_K" << endl;
 				
 			}
 			else plansza.checkIfBoardIsCorrect(true);
 		}
 		else if (command == "PRINT_GAME_BOARD") {
-			if (plansza.checkIfBoardIsCorrect(false) && !plansza.getIfRowsWithKRowOnInput()) {
+			//cout << plansza.checkIfBoardIsCorrect(false) << endl;
+			//cout << !plansza.getIfRowsWithKRowOnInput();
+			if (plansza.getIfBoardCorrect() && !plansza.getIfRowsWithKRowOnInput()) {
 				plansza.printBoard();
 			}
 			else {
+			//	cout << "change";
 				cout << "EMPTY_BOARD" << endl;
 			}
 		}

@@ -21,6 +21,7 @@ private:
 	vector<char>* chars_loaded;
 	vector<BoardField>* game_board;
 	bool ifRowsWithKRowOnInput;
+	bool ifBoardCorrect;
 public:
 	Board();
 	Board(int size, int pieces, int GW, int GB, int GWres, int GBres, char whose);
@@ -28,9 +29,12 @@ public:
 	void loadBoard();
 	void createGameBoard();
 	void printBoard();
-	int howManyRowsOfLengthK();
+	void capturing(int x_pos, int y_pos, int x_dir, int y_dir, char color);
+	int howManyRowsOfLengthKWithCapturing(bool capturing);
 	bool checkIfBoardIsCorrect(bool ifPrintInfo);
+	void setIfBoardCorrect(bool ifCorrect);
 	int getBoardSize() const;
+	bool getIfBoardCorrect() const;
 	bool getIfRowsWithKRowOnInput() const;
 	vector<BoardField>* getGameBoad() const;
 	BoardField* getBoardFieldAtCords(char first_cord, int second_cord);
